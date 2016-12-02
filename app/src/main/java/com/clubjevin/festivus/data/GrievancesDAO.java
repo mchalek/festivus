@@ -13,17 +13,14 @@ import java.util.List;
  */
 
 public class GrievancesDAO {
-    private final GrievancesDbHelper dbHelper;
-    private final SQLiteDatabase db;
+    private SQLiteDatabase db;
 
     public GrievancesDAO(Context context) {
-        dbHelper = new GrievancesDbHelper(context);
+        GrievancesDbHelper dbHelper = new GrievancesDbHelper(context);
         db = dbHelper.getWritableDatabase();
     }
 
     public void close() {
-        dbHelper = null;
-
         if(db != null) {
             db.close();
         }
@@ -36,7 +33,7 @@ public class GrievancesDAO {
         values.put(GrievancesDbHelper.ColumnNames.GRIEVANCE, grievance.getContent());
 
         synchronized(db) {
-            db.insert(dbHelper.TABLE_NAME, null, values);
+            db.insert(GrievancesDbHelper.TABLE_NAME, null, values);
         }
     }
 
