@@ -9,13 +9,14 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+    // huge amount of copy+paste from:
+    // http://www.androidhive.info/2014/07/android-speech-to-text-tutorial/
 
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
@@ -78,12 +79,4 @@ public class MainActivity extends Activity {
 
         }
     }
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }*/
 }
