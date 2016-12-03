@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
@@ -17,11 +18,10 @@ import android.widget.Toast;
 import com.clubjevin.festivus.data.Grievance;
 import com.clubjevin.festivus.data.GrievancesDAO;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AccelerometerActivity {
     // huge amount of copy+paste from:
     // http://www.androidhive.info/2014/07/android-speech-to-text-tutorial/
 
-    private TextView txtSpeechInput;
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
@@ -38,7 +38,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +48,10 @@ public class MainActivity extends Activity {
             }
         });
 
+    }
+
+    private TextView getTxtSpeechInput() {
+        return (TextView) findViewById(R.id.txtSpeechInput);
     }
 
     /**
@@ -83,7 +86,7 @@ public class MainActivity extends Activity {
 
                     String result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
-                    txtSpeechInput.setText(result);
+                    getTxtSpeechInput().setText(result);
 
                     getDao().insert(new Grievance(System.currentTimeMillis(), result));
                 }
@@ -91,5 +94,16 @@ public class MainActivity extends Activity {
             }
 
         }
+    }
+
+    protected void shakeAction() {
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getTxtSpeechInput().setText("SHOOK THAT SHIT");
+                    }
+                }
+        );
     }
 }

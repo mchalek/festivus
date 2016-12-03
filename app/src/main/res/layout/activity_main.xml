@@ -32,10 +32,12 @@
         android:layout_height="wrap_content"
         android:textSize="26dp"
         android:textStyle="normal"
-        android:layout_above="@+id/btnSpeak"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout"
-        android:layout_marginBottom="79dp"
-        android:text="testing" />
+        android:text="testing"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/btnSpeak"
+        android:layout_alignStart="@+id/btnSpeak"
+        android:layout_marginTop="17dp"
+        android:layout_alignRight="@+id/btnSpeak"
+        android:layout_alignEnd="@+id/btnSpeak" />
 
 </RelativeLayout>
