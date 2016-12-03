@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,6 +22,8 @@ import com.clubjevin.festivus.data.GrievancesDAO;
 public class MainActivity extends AccelerometerActivity {
     // huge amount of copy+paste from:
     // http://www.androidhive.info/2014/07/android-speech-to-text-tutorial/
+
+    TextToSpeech textToSpeech;
 
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -38,6 +41,8 @@ public class MainActivity extends AccelerometerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getTxtSpeechInput().setText("");
+
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +53,12 @@ public class MainActivity extends AccelerometerActivity {
             }
         });
 
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+            }
+        });
+        textToSpeech.setLanguage(Locale.UK); // not sure whether this does anything
     }
 
     private TextView getTxtSpeechInput() {
@@ -101,7 +112,17 @@ public class MainActivity extends AccelerometerActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        getTxtSpeechInput().setText("SHOOK THAT SHIT");
+                        Grievance grievance = getDao().readRandom();
+                        if(grievance == null) {
+                            return;
+                        }
+
+                        String grievanceContent = grievance.getContent();
+
+                        // TODO: this speak method was deprecated in API 21, so we should check
+                        // versions
+                        textToSpeech.speak(grievanceContent, TextToSpeech.QUEUE_FLUSH, null);
+                        getTxtSpeechInput().setText(grievanceContent);
                     }
                 }
         );

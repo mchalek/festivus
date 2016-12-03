@@ -19,7 +19,7 @@ public abstract class AccelerometerActivity extends Activity {
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
 
-    private final Double SHAKE_ACCEL_THRESHOLD = 6.0;
+    private final Double SHAKE_ACCEL_THRESHOLD = 12.0;
 
     protected abstract void shakeAction();
 

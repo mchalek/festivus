@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by kevin on 12/1/16.
@@ -14,10 +15,12 @@ import java.util.List;
 
 public class GrievancesDAO {
     private SQLiteDatabase db;
+    private final Random rng;
 
     public GrievancesDAO(Context context) {
         GrievancesDbHelper dbHelper = new GrievancesDbHelper(context);
         db = dbHelper.getWritableDatabase();
+        rng = new Random();
     }
 
     public void close() {
@@ -57,5 +60,15 @@ public class GrievancesDAO {
         }
 
         return result;
+    }
+
+    public Grievance readRandom() {
+        List<Grievance> allGrievances = read();
+        if(allGrievances.size() == 0) {
+            return null;
+        }
+
+        Integer index = rng.nextInt(allGrievances.size());
+        return allGrievances.get(index);
     }
 }
