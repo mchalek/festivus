@@ -14,6 +14,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.clubjevin.festivus.data.Grievance;
+import com.clubjevin.festivus.data.GrievancesDAO;
+
 public class MainActivity extends Activity {
     // huge amount of copy+paste from:
     // http://www.androidhive.info/2014/07/android-speech-to-text-tutorial/
@@ -21,6 +24,14 @@ public class MainActivity extends Activity {
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+
+    private GrievancesDAO dao = null;
+    public GrievancesDAO getDao() {
+        if(dao == null) {
+            dao = new GrievancesDAO(this);
+        }
+        return dao;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +81,11 @@ public class MainActivity extends Activity {
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
 
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    txtSpeechInput.setText(result.get(0));
+                    String result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
+                    txtSpeechInput.setText(result);
+
+                    getDao().insert(new Grievance(System.currentTimeMillis(), result));
                 }
                 break;
             }

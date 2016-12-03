@@ -19,7 +19,6 @@ public class GrievancesDbHelper extends SQLiteOpenHelper {
         public static final String GRIEVANCE = "grievance";
     }
 
-
     public static String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " ( " + ColumnNames.TIMESTAMP + " BIGINT, " + ColumnNames.GRIEVANCE + " TEXT )";
 
