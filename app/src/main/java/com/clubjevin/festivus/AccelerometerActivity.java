@@ -10,7 +10,9 @@ import android.os.Bundle;
 
 /**
  * Created by kevin on 12/3/16.
+ * Test Commit by drew on 12/4/16.
  */
+
 
 public abstract class AccelerometerActivity extends Activity {
     // copy+paste from: http://stackoverflow.com/questions/2317428/android-i-want-to-shake-it
