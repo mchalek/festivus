@@ -102,6 +102,7 @@ public class MainActivity extends AccelerometerActivity {
                     getDao().insert(new Grievance(System.currentTimeMillis(), result));
                 }
                 break;
+
             }
 
         }
