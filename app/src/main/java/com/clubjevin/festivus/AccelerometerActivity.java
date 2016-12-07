@@ -50,7 +50,7 @@ public abstract class AccelerometerActivity extends Activity {
                 //Sets minimum delay time between successive shake events. Effective low-pass filter?
                 int interval = 100;
 
-                public void onSensorChanged(SensorEvent event) {
+                public synchronized void onSensorChanged(SensorEvent event) {
                     // use the event timestamp as reference
                     // so the manager precision won't depends
                     // on the AccelerometerListener implementation
