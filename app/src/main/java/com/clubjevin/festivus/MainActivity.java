@@ -2,6 +2,8 @@ package com.clubjevin.festivus;
 
 import android.app.Activity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -11,12 +13,17 @@ import java.util.Locale;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +38,11 @@ public class MainActivity extends AccelerometerActivity {
 
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    private final int REQ_CODE_SOUND_RECORDING = 101;
     private Handler mHandler = new Handler();
     private GrievancesDAO dao = null;
+
+    private SwitchState alvinButton = null;
 
     public GrievancesDAO getDao() {
         if (dao == null) {
@@ -41,6 +51,15 @@ public class MainActivity extends AccelerometerActivity {
         return dao;
     }
 
+    private Boolean getAlvinMode() {
+        return alvinButton.getIsChecked();
+    }
+
+    private Switch getAlvinSwitch() {
+        return (Switch) findViewById(R.id.mode_switch);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,13 +67,25 @@ public class MainActivity extends AccelerometerActivity {
 
         //getTxtSpeechInput().setText("");
 
+        alvinButton = new SwitchState(false);
+        getAlvinSwitch().setOnCheckedChangeListener(alvinButton);
+
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                promptSpeechInput();
+                if(getAlvinMode()) {
+                    try {
+                        promptAlvinInput();
+                    } catch(IOException e) {
+                        // Not working for some reason, hide alvin mode?
+                    }
+                }
+                else {
+                    promptSpeechInput();
+                }
             }
         });
 
@@ -87,6 +118,17 @@ public class MainActivity extends AccelerometerActivity {
         }
     }
 
+    private void promptAlvinInput() throws IOException {
+        String localFileName = "output.mp4";
+        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        try {
+            startActivityForResult(intent, REQ_CODE_SOUND_RECORDING);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Sorry! Your device doesn't support audio recording", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Receiving speech input
      */
@@ -95,7 +137,7 @@ public class MainActivity extends AccelerometerActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
+            case REQ_CODE_SPEECH_INPUT:
                 if (resultCode == RESULT_OK && null != data) {
 
                     String result = data
@@ -107,8 +149,26 @@ public class MainActivity extends AccelerometerActivity {
                 }
                 break;
 
-            }
+            case REQ_CODE_SOUND_RECORDING:
+                if(resultCode == RESULT_OK && null != data) {
+                    Uri audioUri = data.getData();
+                    Log.v("SOUND_RECORDING", "got audio file URI: " + audioUri.toString());
+                    File f = new File(audioUri.toString());
+                    if(f.exists()) {
+                        Log.v("SOUND_RECORDING", "GOOD: file exists before deletion: " + f.getAbsolutePath());
+                    } else {
+                        Log.v("SOUND_RECORDING", "WTF: File does not exist: " + f.getAbsolutePath());
+                    }
+                    Log.v("SOUND_RECORDING", "deleting file: " + f.getAbsolutePath());
+                    f.delete();
 
+                    if(f.exists()) {
+                        Log.v("SOUND_RECORDING", "File does exist (!?!?!?!): " + f.getAbsolutePath());
+                    } else {
+                        Log.v("SOUND_RECORDING", "File does not exist: " + f.getAbsolutePath());
+                    }
+                }
+                break;
         }
     }
 
