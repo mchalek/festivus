@@ -1,9 +1,11 @@
 package com.clubjevin.festivus;
 
 import android.content.Intent;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,6 +27,8 @@ public class SoundRecordActivity extends AppCompatActivity {
     private long COUNTER_INCREMENT_MILLIS = 43L;
 
     private AtomicBoolean isRecording = new AtomicBoolean(false);
+    private MediaRecorder recorder = null;
+    private File outputFile = null;
 
     private CountDownTimer countDownTimer = null;
 
@@ -46,10 +52,6 @@ public class SoundRecordActivity extends AppCompatActivity {
         getRecordButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRecording.get()) {
-                    return;
-                }
-
                 startRecording();
             }
         });
@@ -57,23 +59,45 @@ public class SoundRecordActivity extends AppCompatActivity {
         getStopButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isRecording.get()) {
-                    return;
-                }
-
                 stopRecording();
             }
         });
     }
 
-    public void startRecording() {
+    private void startRecording() {
         Log.i("SoundRecordActivity", "StartRecording clicked");
-        startTimer();
+        Boolean alreadyRecording = isRecording.getAndSet(true);
+        if (alreadyRecording) {
+            Log.i("SoundRecordActivity", "Already recording.  Nothing to do.");
+            return;
+        }
 
-        isRecording.set(true);
+        outputFile = randomFile();
+        Log.i("SoundRecordActivity", "Recording sound to file: " + outputFile.getAbsolutePath());
+        if (recorder != null) {
+            recorder.release();
+        }
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        recorder.setOutputFile(outputFile.getAbsolutePath());
+        try {
+            recorder.prepare();
+            recorder.start();
+
+            startTimer();
+        } catch (IOException e) {
+            Log.e("giftlist", "io problems while preparing [" +
+                    outputFile.getAbsolutePath() + "]: " + e.getMessage());
+
+            recorder.release();
+            recorder = null;
+            isRecording.set(false);
+        }
     }
 
-    public void startTimer() {
+    private void startTimer() {
         if(countDownTimer != null) {
             throw new IllegalStateException("Timer is already running!");
         }
@@ -90,24 +114,44 @@ public class SoundRecordActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                isRecording.set(false);
+                stopRecording();
             }
         };
 
         countDownTimer.start();
     }
 
+    private synchronized void stopRecording() {
+        Log.i("SoundRecordActivity", "StopRecording triggered");
+        Boolean alreadyRecording = isRecording.getAndSet(false);
+        if (!alreadyRecording) {
+            Log.i("SoundRecordActivity", "Recording not running.  Nothing to do.");
+            return;
+        }
 
-    public void stopRecording() {
-        Log.i("SoundRecordActivity", "StopRecording clicked");
-        isRecording.set(false);
+        assert(recorder != null);
 
-        File dataFile = new File("fuck.you");
-        Uri dataUri = Uri.fromFile(dataFile);
+        recorder.stop();
+        recorder.release();
+        recorder = null;
 
         Intent intent = new Intent();
-        intent.setData(dataUri);
+        intent.setData(Uri.fromFile(outputFile));
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    private File randomFile() {
+        File sdCardPath = Environment.getExternalStorageDirectory();
+        File festivusPath = new File(sdCardPath, "Festivus");
+
+        if(!festivusPath.exists()) {
+            Log.i("giftlist", "Making directory: " + festivusPath.getAbsolutePath());
+            festivusPath.mkdir();
+        } else {
+            Log.i("giftlist", "Directory already exists: " + festivusPath.getAbsolutePath());
+        }
+
+        return new File(festivusPath, UUID.randomUUID().toString() + ".m4a");
     }
 }

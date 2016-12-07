@@ -1,7 +1,13 @@
 package com.clubjevin.festivus;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 //Replaced by android.os.Handler, below.
@@ -169,7 +175,7 @@ public class MainActivity extends AccelerometerActivity {
                 if(resultCode == RESULT_OK && null != data) {
                     Uri audioUri = data.getData();
                     Log.v("SOUND_RECORDING", "got audio file URI: " + audioUri.toString());
-                    File f = new File(audioUri.toString());
+                    File f = new File(audioUri.getPath());
                     if(f.exists()) {
                         Log.v("SOUND_RECORDING", "GOOD: file exists before deletion: " + f.getAbsolutePath());
                     } else {
@@ -185,6 +191,35 @@ public class MainActivity extends AccelerometerActivity {
                     }
                 }
                 break;
+        }
+    }
+
+    private byte[] readSoundFile(Uri recording) {
+        File soundFile = new File(recording.getPath());
+        byte[] soundFileContents = new byte[(int) soundFile.length()];
+
+        try {
+            InputStream input = null;
+            input = new FileInputStream(soundFile);
+            input.read(soundFileContents, 0, (int) soundFile.length());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return soundFileContents;
+    }
+
+
+    private void postRecording(Uri recording) throws IOException {
+        URL url = new URL("34.194.97.23:8080");
+
+        try {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.getOutputStream();
+            byte[] bytes = readSoundFile(recording);
+        } catch(IOException e) {
+            Log.v("network", "Failed to connect to url: " + url.toString());
         }
     }
 
