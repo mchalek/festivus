@@ -1,10 +1,7 @@
 package com.clubjevin.festivus;
 
-import android.app.Activity;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Locale;
 
 //Replaced by android.os.Handler, below.
@@ -12,8 +9,6 @@ import java.util.Locale;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.hardware.SensorManager;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Bundle;
@@ -35,6 +30,7 @@ public class MainActivity extends AccelerometerActivity {
     // http://www.androidhive.info/2014/07/android-speech-to-text-tutorial/
 
     TextToSpeech textToSpeech;
+    private Object textToSpeechMutex = new Object();
 
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -89,12 +85,29 @@ public class MainActivity extends AccelerometerActivity {
             }
         });
 
-        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-            }
-        });
-        textToSpeech.setLanguage(Locale.UK); // not sure whether this does anything
+        initTextToSpeech();
+    }
+
+    private void initTextToSpeech() {
+        synchronized(textToSpeechMutex) {
+            assert(textToSpeech == null);
+
+            textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                }
+            });
+            textToSpeech.setLanguage(Locale.UK); // not sure whether this does anything
+        }
+    }
+
+    private void stopTextToSpeech() {
+        synchronized (textToSpeechMutex) {
+            assert(textToSpeech != null);
+            textToSpeech.stop();
+
+            textToSpeech = null;
+        }
     }
 
     private TextView getTxtSpeechInput() {
@@ -105,6 +118,7 @@ public class MainActivity extends AccelerometerActivity {
      * Showing google speech input dialog
      */
     private void promptSpeechInput() {
+        stopTextToSpeech();
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -119,13 +133,13 @@ public class MainActivity extends AccelerometerActivity {
     }
 
     private void promptAlvinInput() throws IOException {
-        String localFileName = "output.mp4";
-        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        stopTextToSpeech();
+        Intent intent = new Intent(this, SoundRecordActivity.class);
         try {
             startActivityForResult(intent, REQ_CODE_SOUND_RECORDING);
         } catch (ActivityNotFoundException a) {
             Toast.makeText(getApplicationContext(),
-                    "Sorry! Your device doesn't support audio recording", Toast.LENGTH_SHORT).show();
+                    a.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -135,6 +149,8 @@ public class MainActivity extends AccelerometerActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        initTextToSpeech();
 
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT:
@@ -184,9 +200,13 @@ public class MainActivity extends AccelerometerActivity {
 
                         String grievanceContent = grievance.getContent();
 
-                        // TODO: this speak method was deprecated in API 21, so we should check
-                        // versions
-                        textToSpeech.speak(grievanceContent, TextToSpeech.QUEUE_FLUSH, null);
+                        synchronized(textToSpeechMutex) {
+                            if(textToSpeech != null) {
+                                // TODO: this speak method was deprecated in API 21, so we should check
+                                // versions
+                                textToSpeech.speak(grievanceContent, TextToSpeech.QUEUE_FLUSH, null);
+                            }
+                        }
                         getTxtSpeechInput().setText(grievanceContent);
                         //Set screen text to input prompt.
                         reDrawScreen();
