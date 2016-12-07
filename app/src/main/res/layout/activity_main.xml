@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#f7fcfe">
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -19,25 +21,28 @@
 
     <ImageButton
         android:id="@+id/btnSpeak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:background="@null"
         android:src="@drawable/costanza"
-        android:layout_alignBottom="@+id/linearLayout"
-        android:layout_centerHorizontal="true" />
+        android:adjustViewBounds="true"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/txtSpeechInput"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="26dp"
-        android:textStyle="normal"
-        android:text="testing"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/btnSpeak"
-        android:layout_alignStart="@+id/btnSpeak"
+        android:textSize="26sp"
+        android:text="Tap George and say\nyour grievance aloud."
         android:layout_marginTop="17dp"
-        android:layout_alignRight="@+id/btnSpeak"
-        android:layout_alignEnd="@+id/btnSpeak" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:textAlignment="center" />
 
 </RelativeLayout>
