@@ -1,13 +1,7 @@
 package com.clubjevin.festivus;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Locale;
 
 //Replaced by android.os.Handler, below.
@@ -18,7 +12,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -173,7 +166,7 @@ public class MainActivity extends AccelerometerActivity {
 
             case REQ_CODE_SOUND_RECORDING:
                 if(resultCode == RESULT_OK && null != data) {
-                    Uri audioUri = data.getData();
+                    final Uri audioUri = data.getData();
                     Log.v("SOUND_RECORDING", "got audio file URI: " + audioUri.toString());
                     File f = new File(audioUri.getPath());
                     if(f.exists()) {
@@ -182,44 +175,9 @@ public class MainActivity extends AccelerometerActivity {
                         Log.v("SOUND_RECORDING", "WTF: File does not exist: " + f.getAbsolutePath());
                     }
                     Log.v("SOUND_RECORDING", "deleting file: " + f.getAbsolutePath());
-                    f.delete();
-
-                    if(f.exists()) {
-                        Log.v("SOUND_RECORDING", "File does exist (!?!?!?!): " + f.getAbsolutePath());
-                    } else {
-                        Log.v("SOUND_RECORDING", "File does not exist: " + f.getAbsolutePath());
-                    }
+                    //f.delete();
                 }
                 break;
-        }
-    }
-
-    private byte[] readSoundFile(Uri recording) {
-        File soundFile = new File(recording.getPath());
-        byte[] soundFileContents = new byte[(int) soundFile.length()];
-
-        try {
-            InputStream input = null;
-            input = new FileInputStream(soundFile);
-            input.read(soundFileContents, 0, (int) soundFile.length());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return soundFileContents;
-    }
-
-
-    private void postRecording(Uri recording) throws IOException {
-        URL url = new URL("34.194.97.23:8080");
-
-        try {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.getOutputStream();
-            byte[] bytes = readSoundFile(recording);
-        } catch(IOException e) {
-            Log.v("network", "Failed to connect to url: " + url.toString());
         }
     }
 
