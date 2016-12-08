@@ -45,4 +45,16 @@
         android:layout_centerInParent="true"
         android:textAlignment="center" />
 
+    <Switch
+        android:text="Alvin Mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnSpeak"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="21dp"
+        android:id="@+id/mode_switch" />
+
 </RelativeLayout>
