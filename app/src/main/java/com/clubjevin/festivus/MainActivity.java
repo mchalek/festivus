@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.clubjevin.festivus.data.Grievance;
 import com.clubjevin.festivus.data.GrievancesDAO;
+import com.clubjevin.festivus.verifyTextToSpeech;
 
 public class MainActivity extends AccelerometerActivity {
     // huge amount of copy+paste from:
@@ -157,9 +158,12 @@ public class MainActivity extends AccelerometerActivity {
 
                     String result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
-                    getTxtSpeechInput().setText(result);
+                    //getTxtSpeechInput().setText(result);
 
-                    getDao().insert(new Grievance(System.currentTimeMillis(), result));
+                    verifyTextToSpeech vtts=new verifyTextToSpeech(this, result);
+                    vtts.show();
+
+                    //getDao().insert(new Grievance(System.currentTimeMillis(), result));
                     reDrawScreen();
                 }
                 break;
