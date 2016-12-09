@@ -182,15 +182,15 @@ public class MainActivity extends AccelerometerActivity {
     }
 
     protected void shakeAction() {
+        final Grievance grievance = getDao().readRandom();
+        if (grievance == null) {
+            return;
+        }
+
         runOnUiThread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        Grievance grievance = getDao().readRandom();
-                        if (grievance == null) {
-                            return;
-                        }
-
                         playGrievance(grievance);
                         //Set screen text to input prompt.
                         reDrawScreen();
@@ -204,12 +204,20 @@ public class MainActivity extends AccelerometerActivity {
             switch (grievance.getType()) {
                 case TEXT:
                     assert(textToSpeech != null);
-                    textToSpeech.speak(grievance.getText(), TextToSpeech.QUEUE_ADD, null);
-                    getTxtSpeechInput().setText(grievance.getText());
+
+                    String grievanceText = grievance.getText();
+                    assert(grievanceText != null);
+
+                    textToSpeech.speak(grievanceText, TextToSpeech.QUEUE_ADD, null);
+                    getTxtSpeechInput().setText(grievanceText);
                     break;
                 case RECORDING:
                     assert(mplayer != null);
-                    mplayer.play(new File(grievance.getRecording()));
+
+                    String recordingPath = grievance.getRecording();
+                    assert(recordingPath != null);
+
+                    mplayer.play(new File(recordingPath));
                     break;
                 default:
                     throw new IllegalArgumentException("Grievance has unrecognized type: " +
