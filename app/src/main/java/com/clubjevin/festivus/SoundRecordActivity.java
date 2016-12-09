@@ -36,9 +36,9 @@ public class SoundRecordActivity extends AppCompatActivity {
     private long MAX_RECORDING_DURATION_MILLIS = 30 * 1000L;
     private long COUNTER_INCREMENT_MILLIS = 43L;
 
-    private MediaFilePlayer mplayer = new MediaFilePlayer();
+    private MediaFilePlayer mplayer;
 
-    private AtomicBoolean isRecording = new AtomicBoolean(false);
+    private AtomicBoolean isRecording = null;
     private MediaRecorder recorder = null;
 
     private File originalFile = null;
@@ -89,6 +89,9 @@ public class SoundRecordActivity extends AppCompatActivity {
         super.onCreate(savedState);
         setContentView(R.layout.activity_soundrecord);
 
+        mplayer = new MediaFilePlayer();
+        isRecording = new AtomicBoolean(false);
+
         getRecordButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +112,11 @@ public class SoundRecordActivity extends AppCompatActivity {
         getAcceptButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mplayer.play(originalFile);
+                //mplayer.play(originalFile);
+                Intent intent = new Intent();
+                intent.setData(Uri.fromFile(disguisedFile));
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
 
@@ -220,13 +227,6 @@ public class SoundRecordActivity extends AppCompatActivity {
                     }
                 }
         );
-
-        /*
-        Intent intent = new Intent();
-        intent.setData(Uri.fromFile(originalFile));
-        setResult(RESULT_OK, intent);
-        finish();
-        */
     }
 
     private File randomFile() {
