@@ -78,7 +78,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             }
         });
 
-        getStopButton().setVisibility(View.GONE);
+        getStopButton().setVisibility(View.INVISIBLE);
         getStopButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,23 +86,19 @@ public class SoundRecordActivity extends AppCompatActivity {
             }
         });
 
-        getReplayOriginalButton().setVisibility(View.GONE);
+        getReplayOriginalButton().setVisibility(View.INVISIBLE);
         getReplayOriginalButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(originalFile != null) {
-                    mplayer.play(originalFile);
-                }
+                mplayer.play(originalFile);
             }
         });
 
-        getReplayAlteredButton().setVisibility(View.GONE);
+        getReplayAlteredButton().setVisibility(View.INVISIBLE);
         getReplayAlteredButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(disguisedFile != null) {
-                    mplayer.play(disguisedFile);
-                }
+                mplayer.play(disguisedFile);
             }
         });
     }
@@ -115,7 +111,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             return;
         }
 
-        getRecordButton().setVisibility(View.GONE);
+        getRecordButton().setVisibility(View.INVISIBLE);
         getStopButton().setVisibility(View.VISIBLE);
 
         originalFile = randomFile();
@@ -173,7 +169,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             countDownTimer = null;
         }
 
-        getStopButton().setVisibility(View.GONE);
+        getStopButton().setVisibility(View.INVISIBLE);
         getRecordButton().setVisibility(View.VISIBLE);
 
         getReplayOriginalButton().setVisibility(View.VISIBLE);
@@ -197,9 +193,7 @@ public class SoundRecordActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         File recording = getDistortedRecording();
-                        if(recording != null) {
-                            mplayer.play(recording);
-                        }
+                        mplayer.play(recording);
                     }
                 }
         );
