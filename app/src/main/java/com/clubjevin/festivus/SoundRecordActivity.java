@@ -46,24 +46,42 @@ public class SoundRecordActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer = null;
 
-    public Button getRecordButton() {
+    private Button getRecordButton() {
         return (Button) findViewById(R.id.record_button);
     }
 
-    public Button getStopButton() {
+    private Button getStopButton() {
         return (Button) findViewById(R.id.stop_button);
     }
 
-    public Button getReplayOriginalButton() {
+    private Button getReplayOriginalButton() {
         return (Button) findViewById(R.id.replay_original_button);
     }
 
-    public Button getReplayAlteredButton() {
+    private Button getReplayDisguisedButton() {
         return (Button) findViewById(R.id.replay_altered_button);
     }
 
-    public TextView getCounterText() {
+    private void hideReplayButtons() {
+        getReplayOriginalButton().setVisibility(View.INVISIBLE);
+        getReplayDisguisedButton().setVisibility(View.INVISIBLE);
+    }
+
+    private void showReplayButtons() {
+        getReplayOriginalButton().setVisibility(View.VISIBLE);
+        getReplayDisguisedButton().setVisibility(View.VISIBLE);
+    }
+
+    private TextView getCounterText() {
         return (TextView) findViewById(R.id.counter_text);
+    }
+
+    private TextView getInstructionText() {
+        return (TextView) findViewById(R.id.record_instruction_text);
+    }
+
+    private void resetInstructionText() {
+        getInstructionText().setText("Tap the microphone to record your grievance");
     }
 
     @Override
@@ -77,6 +95,7 @@ public class SoundRecordActivity extends AppCompatActivity {
                 startRecording();
             }
         });
+        resetInstructionText();
 
         getStopButton().setVisibility(View.INVISIBLE);
         getStopButton().setOnClickListener(new View.OnClickListener() {
@@ -86,7 +105,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             }
         });
 
-        getReplayOriginalButton().setVisibility(View.INVISIBLE);
+        hideReplayButtons();
         getReplayOriginalButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,8 +113,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             }
         });
 
-        getReplayAlteredButton().setVisibility(View.INVISIBLE);
-        getReplayAlteredButton().setOnClickListener(new View.OnClickListener() {
+        getReplayDisguisedButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mplayer.play(disguisedFile);
@@ -111,8 +129,12 @@ public class SoundRecordActivity extends AppCompatActivity {
             return;
         }
 
+        getInstructionText().setText("Speak your grievance! Press stop button when done");
+
         getRecordButton().setVisibility(View.INVISIBLE);
         getStopButton().setVisibility(View.VISIBLE);
+
+        hideReplayButtons();
 
         originalFile = randomFile();
         Log.i("SoundRecordActivity", "Recording sound to file: " + originalFile.getAbsolutePath());
@@ -172,8 +194,7 @@ public class SoundRecordActivity extends AppCompatActivity {
         getStopButton().setVisibility(View.INVISIBLE);
         getRecordButton().setVisibility(View.VISIBLE);
 
-        getReplayOriginalButton().setVisibility(View.VISIBLE);
-        getReplayAlteredButton().setVisibility(View.VISIBLE);
+        showReplayButtons();
 
         Log.i("SoundRecordActivity", "StopRecording triggered");
         Boolean alreadyRecording = isRecording.getAndSet(false);
@@ -181,6 +202,8 @@ public class SoundRecordActivity extends AppCompatActivity {
             Log.i("SoundRecordActivity", "Recording not running.  Nothing to do.");
             return;
         }
+
+        resetInstructionText();
 
         assert(recorder != null);
 
