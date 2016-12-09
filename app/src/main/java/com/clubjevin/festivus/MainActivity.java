@@ -158,12 +158,10 @@ public class MainActivity extends AccelerometerActivity {
 
                     String result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
-                    //getTxtSpeechInput().setText(result);
-
                     verifyTextToSpeech vtts=new verifyTextToSpeech(this, result);
                     vtts.show();
 
-                    //getDao().insert(new Grievance(System.currentTimeMillis(), result));
+                   //May not be needed, function no longer modifies text.
                     reDrawScreen();
                 }
                 break;

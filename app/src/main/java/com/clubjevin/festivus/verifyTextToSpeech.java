@@ -54,7 +54,8 @@ public class verifyTextToSpeech extends Dialog implements
         switch (v.getId()) {
             case R.id.btn_yes:
                 c.getDao().insert(new Grievance(System.currentTimeMillis(), grvString));
-                c.finish();
+                //c.finish();
+                dismiss();
                 break;
             case R.id.btn_no:
                 dismiss();
