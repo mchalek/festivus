@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.clubjevin.festivus.data.Grievance;
 import com.clubjevin.festivus.data.GrievancesDAO;
-import com.clubjevin.festivus.verifyTextToSpeech;
 
 public class MainActivity extends AccelerometerActivity {
     // huge amount of copy+paste from:
@@ -37,6 +36,8 @@ public class MainActivity extends AccelerometerActivity {
     private final int REQ_CODE_SOUND_RECORDING = 101;
     private Handler mHandler = new Handler();
     private GrievancesDAO dao = null;
+
+    private MediaFilePlayer mplayer = null;
 
     private SwitchState alvinButton = null;
 
@@ -86,6 +87,7 @@ public class MainActivity extends AccelerometerActivity {
         });
 
         initTextToSpeech();
+        mplayer = new MediaFilePlayer();
     }
 
     private void initTextToSpeech() {
@@ -168,46 +170,64 @@ public class MainActivity extends AccelerometerActivity {
 
             case REQ_CODE_SOUND_RECORDING:
                 if(resultCode == RESULT_OK && null != data) {
-                    final Uri audioUri = data.getData();
-                    Log.v("SOUND_RECORDING", "got audio file URI: " + audioUri.toString());
-                    File f = new File(audioUri.getPath());
-                    if(f.exists()) {
-                        Log.v("SOUND_RECORDING", "GOOD: file exists before deletion: " + f.getAbsolutePath());
-                    } else {
-                        Log.v("SOUND_RECORDING", "WTF: File does not exist: " + f.getAbsolutePath());
+                    Uri uri = data.getData();
+
+                    if(uri != null) {
+                        Log.i("dbinsert", "Inserting new grievance with path " + uri.getPath());
+                        getDao().insert(new Grievance(System.currentTimeMillis(), null, uri.getPath()));
                     }
-                    Log.v("SOUND_RECORDING", "deleting file: " + f.getAbsolutePath());
-                    //f.delete();
+
+                    reDrawScreen();
                 }
                 break;
         }
     }
 
     protected void shakeAction() {
+        final Grievance grievance = getDao().readRandom();
+        if (grievance == null) {
+            return;
+        }
+
         runOnUiThread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        Grievance grievance = getDao().readRandom();
-                        if (grievance == null) {
-                            return;
-                        }
-
-                        String grievanceContent = grievance.getContent();
-
-                        synchronized(textToSpeechMutex) {
-                            if(textToSpeech != null) {
-                                // TODO: this speak method was deprecated in API 21, so we should check
-                                // versions
-                                textToSpeech.speak(grievanceContent, TextToSpeech.QUEUE_FLUSH, null);
-                            }
-                        }
-                        getTxtSpeechInput().setText(grievanceContent);
+                        playGrievance(grievance);
                         //Set screen text to input prompt.
                         reDrawScreen();
                     }
                 }
         );
+    }
+
+    private void playGrievance(Grievance grievance) {
+        synchronized (textToSpeechMutex) {
+            switch (grievance.getType()) {
+                case TEXT:
+                    assert(textToSpeech != null);
+
+                    String grievanceText = grievance.getText();
+                    assert(grievanceText != null);
+
+                    textToSpeech.speak(grievanceText, TextToSpeech.QUEUE_ADD, null);
+                    getTxtSpeechInput().setText(grievanceText);
+                    break;
+                case RECORDING:
+                    assert(mplayer != null);
+
+                    String recordingPath = grievance.getRecording();
+                    assert(recordingPath != null);
+
+                    Log.i("mplayer", "playing recording from file: " + recordingPath);
+
+                    mplayer.play(new File(recordingPath));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Grievance has unrecognized type: " +
+                            grievance.getType().name());
+            }
+        }
     }
 
 

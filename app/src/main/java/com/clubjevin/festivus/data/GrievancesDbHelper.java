@@ -10,17 +10,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class GrievancesDbHelper extends SQLiteOpenHelper {
     // Mostly copied from https://developer.android.com/training/basics/data-storage/databases.html#DbHelper
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "FestivusGrievances.db";
     public static final String TABLE_NAME = "grievances";
 
     public static class ColumnNames {
         public static final String TIMESTAMP = "timestamp";
-        public static final String GRIEVANCE = "grievance";
+        public static final String GRIEVANCE_TEXT = "grievance_text";
+        public static final String GRIEVANCE_RECORDING = "recording_path";
     }
 
     public static String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + " ( " + ColumnNames.TIMESTAMP + " BIGINT, " + ColumnNames.GRIEVANCE + " TEXT )";
+            "CREATE TABLE " + TABLE_NAME + " ( " +
+                    ColumnNames.TIMESTAMP + " BIGINT, " +
+                    ColumnNames.GRIEVANCE_TEXT + " TEXT, " +
+                    ColumnNames.GRIEVANCE_RECORDING + " TEXT )";
 
     public static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + TABLE_NAME;

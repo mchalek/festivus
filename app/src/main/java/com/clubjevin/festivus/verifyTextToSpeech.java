@@ -53,7 +53,7 @@ public class verifyTextToSpeech extends Dialog implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_yes:
-                c.getDao().insert(new Grievance(System.currentTimeMillis(), grvString));
+                c.getDao().insert(new Grievance(System.currentTimeMillis(), grvString, null));
                 //c.finish();
                 dismiss();
                 break;
