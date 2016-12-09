@@ -6,14 +6,18 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -243,22 +247,7 @@ public class SoundRecordActivity extends AppCompatActivity {
         return new File(festivusPath, UUID.randomUUID().toString() + ".ogg");
     }
 
-    private byte[] readSoundFile() {
-        byte[] soundFileContents = new byte[(int) originalFile.length()];
-
-        try {
-            InputStream input = null;
-            input = new FileInputStream(originalFile);
-            input.read(soundFileContents, 0, (int) originalFile.length());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return soundFileContents;
-    }
-
-    private File getDistortedRecording() {
+    private synchronized File getDistortedRecording() {
         URL url = null;
         try {
             url = new URL("http://34.194.97.23:8080/darth");
@@ -279,36 +268,38 @@ public class SoundRecordActivity extends AppCompatActivity {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            OutputStream out = conn.getOutputStream();
-            byte[] bytes = readSoundFile();
-            out.write(bytes, 0, (int) originalFile.length());
-            out.flush();
-            out.close();
+            {
+                OutputStream out = conn.getOutputStream();
+                InputStream in = new FileInputStream(originalFile);
+
+                int bytesCopied = IOUtils.copy(in, out);
+                out.close();
+                in.close();
+
+                Log.i("network", "Uploaded " + Integer.toString(bytesCopied) + " bytes to " + url.toString());
+            }
 
             responseCode = conn.getResponseCode();
 
-            InputStream in = conn.getInputStream();
-            // Note: this will throw an exception if content-length is not present, or is not a valid integer,
-            // and will crash the program
-            int inputSize = Integer.parseInt(conn.getHeaderField("content-length"));
-            byte[] resultBytes = new byte[inputSize];
-            in.read(resultBytes, 0, inputSize);
-            in.close();
+            if(responseCode / 100 == 2) {
+                InputStream in = conn.getInputStream();
 
-            disguisedFile = randomFile();
-            OutputStream fileOut = new FileOutputStream(disguisedFile);
-            fileOut.write(resultBytes, 0, inputSize);
-            fileOut.flush();
-            fileOut.close();
+                disguisedFile = randomFile();
+                OutputStream out = new FileOutputStream(disguisedFile);
 
-            Log.i("network", "Wrote " + Integer.toString(inputSize) + " bytes to file: " + disguisedFile.getAbsolutePath());
+                int bytesCopied = IOUtils.copy(in, out);
+                out.close();
+                in.close();
+
+                Log.i("network", "Downloaded " + Integer.toString(bytesCopied) + " bytes to file: " + disguisedFile.getAbsolutePath());
+            } else {
+                Log.i("network", "Received failure success code from server: " + Integer.toString(responseCode));
+            }
         } catch(IOException e) {
             Log.v("network", "Failed to connect to url " + url.toString() + ": " + e.toString());
             responseCode = 500;
             disguisedFile = null;
         }
-
-        Log.i("distort", "response code is: " + responseCode.toString());
 
         return disguisedFile;
     }
