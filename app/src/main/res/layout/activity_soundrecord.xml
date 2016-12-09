@@ -2,18 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:id="@+id/record_button"
-        android:layout_marginLeft="69dp"
-        android:layout_marginStart="69dp"
-        android:layout_marginBottom="115dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@android:drawable/ic_btn_speak_now" />
-
     <TextView
         android:text="00:00"
         android:layout_width="wrap_content"
@@ -25,11 +13,42 @@
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:id="@+id/record_button"
+        android:layout_marginBottom="113dp"
+        android:background="@android:drawable/ic_btn_speak_now"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
         android:layout_height="wrap_content"
         android:id="@+id/stop_button"
+        android:layout_width="40dp"
         android:layout_alignBaseline="@+id/record_button"
         android:layout_alignBottom="@+id/record_button"
-        android:layout_alignRight="@+id/counter_text"
-        android:layout_alignEnd="@+id/counter_text"
-        android:layout_width="40dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Play Altered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/replay_original_button"
+        android:layout_toRightOf="@+id/record_button"
+        android:layout_toEndOf="@+id/record_button"
+        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp"
+        android:id="@+id/replay_altered_button" />
+
+    <Button
+        android:text="Play Original"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:id="@+id/replay_original_button"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/stop_button"
+        android:layout_toStartOf="@+id/stop_button"
+        android:layout_marginRight="22dp"
+        android:layout_marginEnd="22dp" />
 </RelativeLayout>
