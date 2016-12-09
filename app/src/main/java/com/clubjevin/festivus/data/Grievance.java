@@ -5,18 +5,42 @@ package com.clubjevin.festivus.data;
  */
 
 public class Grievance {
+    public enum GrievanceType { TEXT, RECORDING };
+
+    final GrievanceType type;
+    public GrievanceType getType() {
+        return type;
+    }
+
     private final Long timestamp;
     public Long getTimestamp() {
         return timestamp;
     }
 
-    private final String content;
-    public String getContent() {
-        return content;
+    private final String text;
+    public String getText() {
+        return text;
     }
 
-    public Grievance(Long timestamp, String content) {
+    private final String recording;
+    public String getRecording() {
+        return recording;
+    }
+
+    public Grievance(Long timestamp, String text, String recording) {
         this.timestamp = timestamp;
-        this.content = content;
+        this.text = text;
+        this.recording = recording;
+
+        assert(text == null || recording == null);
+
+        GrievanceType type = null;
+        if(text == null) {
+            type = GrievanceType.RECORDING;
+        } else {
+            type = GrievanceType.TEXT;
+        }
+
+        this.type = type;
     }
 }

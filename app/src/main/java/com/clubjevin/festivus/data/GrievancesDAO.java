@@ -33,7 +33,14 @@ public class GrievancesDAO {
     public void insert(Grievance grievance) {
         ContentValues values = new ContentValues();
         values.put(GrievancesDbHelper.ColumnNames.TIMESTAMP, grievance.getTimestamp());
-        values.put(GrievancesDbHelper.ColumnNames.GRIEVANCE, grievance.getContent());
+
+        if(grievance.getText() != null) {
+            values.put(GrievancesDbHelper.ColumnNames.GRIEVANCE_TEXT, grievance.getText());
+        }
+
+        if(grievance.getRecording() != null) {
+            values.put(GrievancesDbHelper.ColumnNames.GRIEVANCE_RECORDING, grievance.getRecording());
+        }
 
         synchronized(db) {
             db.insert(GrievancesDbHelper.TABLE_NAME, null, values);
@@ -43,7 +50,8 @@ public class GrievancesDAO {
     public List<Grievance> read() {
         String[] columnNames = {
                 GrievancesDbHelper.ColumnNames.TIMESTAMP,
-                GrievancesDbHelper.ColumnNames.GRIEVANCE
+                GrievancesDbHelper.ColumnNames.GRIEVANCE_TEXT,
+                GrievancesDbHelper.ColumnNames.GRIEVANCE_RECORDING
         };
 
         Cursor cursor = null;
@@ -55,7 +63,18 @@ public class GrievancesDAO {
 
         boolean rowsRemain = cursor.moveToFirst();
         while(rowsRemain) {
-            result.add(new Grievance(cursor.getLong(0), cursor.getString(1)));
+            Grievance grievance = null;
+            if(cursor.isNull(1) && !cursor.isNull(2)) {
+                grievance = new Grievance(cursor.getLong(0), cursor.getString(1), null);
+            } else if(!cursor.isNull(1) && cursor.isNull(2)) {
+                grievance = new Grievance(cursor.getLong(0), null, cursor.getString(2));
+            } else if(!cursor.isNull(1) && !cursor.isNull(2)) {
+                throw new IllegalArgumentException("Invalid database row: cannot populate both text and recording path!");
+            } else {
+                throw new IllegalArgumentException("Invalid database row: text and recording path cannot both be null!");
+            }
+            result.add(grievance);
+
             rowsRemain = cursor.moveToNext();
         }
 
