@@ -2,18 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:id="@+id/record_button"
-        android:layout_marginLeft="69dp"
-        android:layout_marginStart="69dp"
-        android:layout_marginBottom="115dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@android:drawable/ic_btn_speak_now" />
-
     <TextView
         android:text="00:00"
         android:layout_width="wrap_content"
@@ -25,11 +13,55 @@
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:id="@+id/record_button"
+        android:layout_marginBottom="113dp"
+        android:background="@android:drawable/ic_btn_speak_now"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
         android:layout_height="wrap_content"
         android:id="@+id/stop_button"
+        android:layout_width="40dp"
         android:layout_alignBaseline="@+id/record_button"
         android:layout_alignBottom="@+id/record_button"
-        android:layout_alignRight="@+id/counter_text"
-        android:layout_alignEnd="@+id/counter_text"
-        android:layout_width="40dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Replay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/accept_button"
+        android:layout_toRightOf="@+id/record_button"
+        android:layout_toEndOf="@+id/record_button"
+        android:layout_marginLeft="14dp"
+        android:layout_marginStart="14dp"
+        android:id="@+id/replay_altered_button" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/accept_button"
+        android:layout_alignStart="@+id/accept_button"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="25dp"
+        android:id="@+id/record_instruction_text"
+        android:layout_alignRight="@+id/replay_altered_button"
+        android:layout_alignEnd="@+id/replay_altered_button"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <Button
+        android:text="Accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/accept_button"
+        android:layout_marginTop="38dp"
+        android:layout_below="@+id/stop_button"
+        android:layout_toLeftOf="@+id/record_button"
+        android:layout_toStartOf="@+id/record_button" />
 </RelativeLayout>
