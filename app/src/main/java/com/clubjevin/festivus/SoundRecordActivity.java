@@ -54,8 +54,8 @@ public class SoundRecordActivity extends AppCompatActivity {
         return (Button) findViewById(R.id.stop_button);
     }
 
-    private Button getReplayOriginalButton() {
-        return (Button) findViewById(R.id.replay_original_button);
+    private Button getAcceptButton() {
+        return (Button) findViewById(R.id.accept_button);
     }
 
     private Button getReplayDisguisedButton() {
@@ -63,12 +63,12 @@ public class SoundRecordActivity extends AppCompatActivity {
     }
 
     private void hideReplayButtons() {
-        getReplayOriginalButton().setVisibility(View.INVISIBLE);
+        getAcceptButton().setVisibility(View.INVISIBLE);
         getReplayDisguisedButton().setVisibility(View.INVISIBLE);
     }
 
     private void showReplayButtons() {
-        getReplayOriginalButton().setVisibility(View.VISIBLE);
+        getAcceptButton().setVisibility(View.VISIBLE);
         getReplayDisguisedButton().setVisibility(View.VISIBLE);
     }
 
@@ -106,7 +106,7 @@ public class SoundRecordActivity extends AppCompatActivity {
         });
 
         hideReplayButtons();
-        getReplayOriginalButton().setOnClickListener(new View.OnClickListener() {
+        getAcceptButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mplayer.play(originalFile);

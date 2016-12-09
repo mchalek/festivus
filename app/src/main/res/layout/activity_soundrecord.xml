@@ -30,25 +30,38 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="Play Altered"
+        android:text="Replay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/replay_original_button"
+        android:layout_alignBottom="@+id/accept_button"
         android:layout_toRightOf="@+id/record_button"
         android:layout_toEndOf="@+id/record_button"
         android:layout_marginLeft="14dp"
         android:layout_marginStart="14dp"
         android:id="@+id/replay_altered_button" />
 
-    <Button
-        android:text="Play Original"
+    <TextView
+        android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:id="@+id/replay_original_button"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/stop_button"
-        android:layout_toStartOf="@+id/stop_button"
-        android:layout_marginRight="22dp"
-        android:layout_marginEnd="22dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/accept_button"
+        android:layout_alignStart="@+id/accept_button"
+        android:layout_marginLeft="11dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="25dp"
+        android:id="@+id/record_instruction_text"
+        android:layout_alignRight="@+id/replay_altered_button"
+        android:layout_alignEnd="@+id/replay_altered_button"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <Button
+        android:text="Accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/accept_button"
+        android:layout_marginTop="38dp"
+        android:layout_below="@+id/stop_button"
+        android:layout_toLeftOf="@+id/record_button"
+        android:layout_toStartOf="@+id/record_button" />
 </RelativeLayout>
