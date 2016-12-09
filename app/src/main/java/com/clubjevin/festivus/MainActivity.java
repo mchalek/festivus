@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -172,6 +173,7 @@ public class MainActivity extends AccelerometerActivity {
                     Uri uri = data.getData();
 
                     if(uri != null) {
+                        Log.i("dbinsert", "Inserting new grievance with path " + uri.getPath());
                         getDao().insert(new Grievance(System.currentTimeMillis(), null, uri.getPath()));
                     }
 
@@ -216,6 +218,8 @@ public class MainActivity extends AccelerometerActivity {
 
                     String recordingPath = grievance.getRecording();
                     assert(recordingPath != null);
+
+                    Log.i("mplayer", "playing recording from file: " + recordingPath);
 
                     mplayer.play(new File(recordingPath));
                     break;

@@ -64,9 +64,9 @@ public class GrievancesDAO {
         boolean rowsRemain = cursor.moveToFirst();
         while(rowsRemain) {
             Grievance grievance = null;
-            if(cursor.isNull(1) && !cursor.isNull(2)) {
+            if(!cursor.isNull(1) && cursor.isNull(2)) {
                 grievance = new Grievance(cursor.getLong(0), cursor.getString(1), null);
-            } else if(!cursor.isNull(1) && cursor.isNull(2)) {
+            } else if(cursor.isNull(1) && !cursor.isNull(2)) {
                 grievance = new Grievance(cursor.getLong(0), null, cursor.getString(2));
             } else if(!cursor.isNull(1) && !cursor.isNull(2)) {
                 throw new IllegalArgumentException("Invalid database row: cannot populate both text and recording path!");
