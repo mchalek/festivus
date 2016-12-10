@@ -176,6 +176,9 @@ public class SoundRecordActivity extends AppCompatActivity {
         recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        recorder.setAudioSamplingRate(16000);
+        recorder.setAudioChannels(1);
+        recorder.setAudioEncodingBitRate(20000);
         recorder.setOutputFile(originalFile.getAbsolutePath());
         try {
             recorder.prepare();
