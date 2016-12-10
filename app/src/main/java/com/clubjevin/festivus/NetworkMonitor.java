@@ -1,15 +1,10 @@
 package com.clubjevin.festivus;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.view.View;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Phaser;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
