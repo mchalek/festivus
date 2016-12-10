@@ -31,16 +31,39 @@ public class NetworkMonitor {
 
     private AtomicBoolean networkOk = new AtomicBoolean(false);
 
-    public NetworkMonitor() {
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService scheduler = null;
+    private Object schedulerMutex = new Object();
 
-        scheduler.scheduleWithFixedDelay(
-                new Runnable() {
-                    public void run() {
-                        networkOk.set(isNetworkAvailable());
-                    }
-                }, 0, NETWORK_CHECK_INTERVAL_MILLIS, TimeUnit.MILLISECONDS
-        );
+    public NetworkMonitor() {
+        startScheduler();
+    }
+
+    public void startScheduler() {
+        synchronized(schedulerMutex) {
+            if(scheduler != null){
+                return;
+            }
+
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+
+            scheduler.scheduleWithFixedDelay(
+                    new Runnable() {
+                        public void run() {
+                            networkOk.set(isNetworkAvailable());
+                        }
+                    }, 0, NETWORK_CHECK_INTERVAL_MILLIS, TimeUnit.MILLISECONDS
+            );
+        }
+    }
+
+    public void stopScheduler() {
+        synchronized (schedulerMutex) {
+            if(scheduler == null) {
+                return;
+            }
+            scheduler.shutdown();
+            scheduler = null;
+        }
     }
 
     public boolean isNetworkOk() {

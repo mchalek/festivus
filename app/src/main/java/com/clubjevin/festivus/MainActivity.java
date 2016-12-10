@@ -107,6 +107,17 @@ public class MainActivity extends AccelerometerActivity {
         setupNetworkMonitor();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        NetworkMonitor.getInstance().stopScheduler();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NetworkMonitor.getInstance().startScheduler();
+    }
 
     private void setupNetworkMonitor() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
