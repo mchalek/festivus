@@ -4,7 +4,6 @@
 
 package com.clubjevin.festivus;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -12,9 +11,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
-import org.w3c.dom.Text;
 
 import com.clubjevin.festivus.data.Grievance;
 import com.clubjevin.festivus.data.GrievancesDAO;
