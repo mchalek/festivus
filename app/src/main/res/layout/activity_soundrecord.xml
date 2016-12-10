@@ -36,8 +36,6 @@
         android:layout_alignBottom="@+id/accept_button"
         android:layout_toRightOf="@+id/record_button"
         android:layout_toEndOf="@+id/record_button"
-        android:layout_marginLeft="14dp"
-        android:layout_marginStart="14dp"
         android:id="@+id/replay_altered_button" />
 
     <TextView
@@ -47,13 +45,13 @@
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/accept_button"
         android:layout_alignStart="@+id/accept_button"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp"
         android:layout_marginTop="25dp"
         android:id="@+id/record_instruction_text"
         android:layout_alignRight="@+id/replay_altered_button"
         android:layout_alignEnd="@+id/replay_altered_button"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center" />
 
     <Button
         android:text="Accept"

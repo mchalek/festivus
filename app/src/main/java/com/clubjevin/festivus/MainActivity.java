@@ -45,7 +45,7 @@ public class MainActivity extends AccelerometerActivity {
 
     private MediaFilePlayer mplayer = null;
 
-    private SwitchState alvinButton = null;
+    private SwitchState alvinButton;
 
     public GrievancesDAO getDao() {
         if (dao == null) {
@@ -68,13 +68,15 @@ public class MainActivity extends AccelerometerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //getTxtSpeechInput().setText("");
 
+        //Weird bug where the alvin switch doesnt draw immediately on app open.
         alvinButton = new SwitchState(false);
         getAlvinSwitch().setOnCheckedChangeListener(alvinButton);
+        getAlvinSwitch().setTextOff("Classic");
+        getAlvinSwitch().setTextOn("Festivus Miracle");
+        getAlvinSwitch().setVisibility(View.VISIBLE);
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
-
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override

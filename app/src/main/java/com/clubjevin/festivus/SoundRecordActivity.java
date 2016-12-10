@@ -85,7 +85,7 @@ public class SoundRecordActivity extends AppCompatActivity {
     }
 
     private void resetInstructionText() {
-        getInstructionText().setText("Tap the microphone to record your grievance");
+        getInstructionText().setText("Speak your grievance!\nThen press stop.");
     }
 
     @Override
@@ -172,7 +172,7 @@ public class SoundRecordActivity extends AppCompatActivity {
             return;
         }
 
-        getInstructionText().setText("Speak your grievance! Press stop button when done");
+        getInstructionText().setText("Speak your grievance!\nThen press stop.");
 
         getRecordButton().setVisibility(View.INVISIBLE);
         getStopButton().setVisibility(View.VISIBLE);
