@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentTop="true"
     android:layout_centerInParent="true"
-    android:background="#f7fcfe"
+    android:background="@android:color/white"
     android:orientation="vertical" >
 
     <TextView
@@ -16,45 +17,64 @@
         android:layout_margin="10dp"
         android:text="Variable Text Here"
         android:textColor="@android:color/black"
-        android:textSize="26sp" />
+        android:textSize="26sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="false"
+        android:textAlignment="center" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/kramer"
+        android:id="@+id/kman"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="Mr. Kramer" />
 
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_alignParentBottom="true"
         android:background="#f7fcfe"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:weightSum="2">
 
 
         <Button
             android:id="@+id/btn_yes"
-            android:layout_width="150sp"
-            android:layout_height="50sp"
-            android:layout_marginLeft="15sp"
-            android:layout_marginBottom="5sp"
             android:background="@android:color/black"
             android:clickable="true"
             android:text="Yes"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:layout_alignParentLeft="true"
-            android:textSize="20sp"/>
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp" />
 
         <Button
             android:id="@+id/btn_no"
-            android:layout_width="150sp"
-            android:layout_height="50sp"
-            android:layout_marginRight="15sp"
-            android:layout_marginBottom="5sp"
             android:background="@android:color/black"
             android:clickable="true"
             android:text="No"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:layout_alignParentRight="true"
-            android:textSize="20sp"/>
-    </RelativeLayout>
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp" />
+    </LinearLayout>
+
 
 </RelativeLayout>
