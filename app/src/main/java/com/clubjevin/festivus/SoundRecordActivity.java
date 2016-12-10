@@ -1,21 +1,18 @@
 package com.clubjevin.festivus;
 
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 
@@ -27,10 +24,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kevin on 12/7/16.
@@ -49,6 +46,9 @@ public class SoundRecordActivity extends AppCompatActivity {
     private File disguisedFile = null;
 
     private CountDownTimer countDownTimer = null;
+
+    private AtomicInteger debugModePressCount = new AtomicInteger(0);
+    private Integer DEBUG_MODE_UNLOCK_COUNT = 7;
 
     private Button getRecordButton() {
         return (Button) findViewById(R.id.record_button);
@@ -99,7 +99,14 @@ public class SoundRecordActivity extends AppCompatActivity {
         getRecordButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startRecording();
+                if(NetworkMonitor.getInstance().isNetworkOk()) {
+                    startRecording();
+                } else {
+                    Toast.makeText(
+                            getApplicationContext(),
+                            "Sorry, could not connect to server for alvin mode",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
         resetInstructionText();
@@ -116,11 +123,24 @@ public class SoundRecordActivity extends AppCompatActivity {
         getAcceptButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mplayer.play(originalFile);
+                if(originalFile != null && originalFile.exists()) {
+                    originalFile.delete();
+                }
                 Intent intent = new Intent();
                 intent.setData(Uri.fromFile(disguisedFile));
                 setResult(RESULT_OK, intent);
                 finish();
+            }
+        });
+
+        getCounterText().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(debugModePressCount.getAndIncrement() >= DEBUG_MODE_UNLOCK_COUNT) {
+                    if (originalFile != null && originalFile.exists()) {
+                        mplayer.play(originalFile);
+                    }
+                }
             }
         });
 
@@ -202,11 +222,6 @@ public class SoundRecordActivity extends AppCompatActivity {
             countDownTimer = null;
         }
 
-        getStopButton().setVisibility(View.INVISIBLE);
-        getRecordButton().setVisibility(View.VISIBLE);
-
-        showReplayButtons();
-
         Log.i("SoundRecordActivity", "StopRecording triggered");
         Boolean alreadyRecording = isRecording.getAndSet(false);
         if (!alreadyRecording) {
@@ -214,20 +229,40 @@ public class SoundRecordActivity extends AppCompatActivity {
             return;
         }
 
-        resetInstructionText();
-
         assert(recorder != null);
 
         recorder.stop();
         recorder.release();
         recorder = null;
 
+        getStopButton().setVisibility(View.INVISIBLE);
+        getRecordButton().setVisibility(View.VISIBLE);
+        resetInstructionText();
+
         AsyncTask.execute(
                 new Runnable() {
                     @Override
                     public void run() {
                         File recording = getDistortedRecording();
-                        mplayer.play(recording);
+                        if(recording != null) {
+                            mplayer.play(recording);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    showReplayButtons();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(
+                                    new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(
+                                                    getApplicationContext(),
+                                                    "Sorry, could not connect to server for alvin mode",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                            );
+                        }
                     }
                 }
         );

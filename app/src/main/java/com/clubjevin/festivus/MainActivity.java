@@ -2,18 +2,31 @@ package com.clubjevin.festivus;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //Replaced by android.os.Handler, below.
 //import java.util.logging.Handler;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,6 +49,8 @@ public class MainActivity extends AccelerometerActivity {
     private final int REQ_CODE_SOUND_RECORDING = 101;
     private Handler mHandler = new Handler();
     private GrievancesDAO dao = null;
+
+    private long NETWORK_CHECK_INTERVAL_MILLIS = 5 * 1000L;
 
     private MediaFilePlayer mplayer = null;
 
@@ -88,6 +103,29 @@ public class MainActivity extends AccelerometerActivity {
 
         initTextToSpeech();
         mplayer = new MediaFilePlayer();
+
+        setupNetworkMonitor();
+    }
+
+
+    private void setupNetworkMonitor() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleWithFixedDelay(
+                new Runnable() {
+                    public void run() {
+                        runOnUiThread( new Runnable() {
+                            public void run() {
+                                if(NetworkMonitor.getInstance().isNetworkOk()) {
+                                    getAlvinSwitch().setVisibility(View.VISIBLE);
+                                } else {
+                                    getAlvinSwitch().setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
+                    }
+                }, 0, NETWORK_CHECK_INTERVAL_MILLIS, TimeUnit.MILLISECONDS
+        );
     }
 
     private void initTextToSpeech() {
@@ -135,7 +173,16 @@ public class MainActivity extends AccelerometerActivity {
     }
 
     private void promptAlvinInput() throws IOException {
+        if(!NetworkMonitor.getInstance().isNetworkOk()) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Sorry, could not connect to server for alvin mode",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         stopTextToSpeech();
+
         Intent intent = new Intent(this, SoundRecordActivity.class);
         try {
             startActivityForResult(intent, REQ_CODE_SOUND_RECORDING);
@@ -248,6 +295,7 @@ public class MainActivity extends AccelerometerActivity {
                 }
         );
     }
+
 }
 
 
