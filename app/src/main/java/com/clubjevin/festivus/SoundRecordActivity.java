@@ -152,6 +152,18 @@ public class SoundRecordActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        NetworkMonitor.getInstance().stopScheduler();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        NetworkMonitor.getInstance().startScheduler();
+    }
+
     private void startRecording() {
         Log.i("SoundRecordActivity", "StartRecording clicked");
         Boolean alreadyRecording = isRecording.getAndSet(true);
