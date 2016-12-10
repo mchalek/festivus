@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -27,6 +28,7 @@ public class verifyTextToSpeech extends Dialog implements
     public TextView t;
     public String grvString;
     public GrievancesDAO local_DAO;
+    private ImageView iv;
 
     public verifyTextToSpeech(MainActivity a, String str) {
         super(a);
@@ -45,8 +47,9 @@ public class verifyTextToSpeech extends Dialog implements
         yes.setOnClickListener(this);
         no.setOnClickListener(this);
         t = (TextView) findViewById(R.id.txt_dia);
-        t.setText("Did you say?\n"+grvString);
-
+        t.setText("Did you say?\n\n"+grvString);
+        iv = (ImageView) findViewById(R.id.kman);
+        iv.setImageResource(R.drawable.kramer);
     }
 
     @Override
